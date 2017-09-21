@@ -3,6 +3,7 @@ var mysql = require ('mysql');
 var app = express();
 var bodyParser = require("body-parser");
 
+
 var connection = mysql.createConnection({
     host : 'localhost',
     user : 'root',
@@ -24,22 +25,27 @@ connection.connect(function(error){
 
 app.get('/', function(req,res){
     
+    var data = {
+        "Data":""
+    };
     //about mysql
     connection.query("SELECT * FROM openxc", function(error,rows,fields){
         if(!!error){
             console.log('Error in the query');
         }else{
             // console.log('successful query'); 
-            
-            console.log(rows);
-            res.json(rows);
+           
+            data["Data"] = rows;
+            var myJsonString = JSON.stringify(rows);
+            console.log(JSON.stringify(data, null, 3));
+            res.json(data);
         }
     });
 });
 
 app.post('/', function(req,res){
     // console.log("added");
-    var id = req.body.id;
+    // var id = req.body.id;
     var rpm = req.body.rpm;
     console.log(id);
     
@@ -50,7 +56,7 @@ app.post('/', function(req,res){
    
     
     //about mysql
-   connection.query("INSERT INTO openxc(rpm,userid) VALUES (?,1)",rpm, function(error,rows,fields){
+   connection.query("INSERT INTO openxc(rpm) VALUES (?)",rpm, function(error,rows,fields){
         
 
         if(!!error){
@@ -62,5 +68,7 @@ app.post('/', function(req,res){
         }
     });
 });
+
+
 
 app.listen(8080);
